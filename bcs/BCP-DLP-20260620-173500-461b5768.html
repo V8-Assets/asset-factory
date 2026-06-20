@@ -1,0 +1,71 @@
+replace(
+replace(
+replace(
+replace(
+replace(
+replace(
+replace(
+replace(
+replace(
+replace(
+replace(
+replace(
+replace(
+replace(
+replace(
+replace(
+replace(
+replace(
+replace(
+replace(
+replace(
+replace(
+replace(
+replace(
+replace(
+replace(
+replace(
+replace(
+replace(
+replace(
+replace(
+replace(
+replace(
+replace(
+replace(
+  string(body('Obter_conteúdo_de_html_template_no_sharepoint')),
+  '{{CLIENTE}}', triggerBody()?['text_2']),
+  '{{VENDEDOR}}', triggerBody()?['text']),
+  '{{EMAIL}}', triggerBody()?['text_1']),
+  '{{ANO_IMPLANTACAO}}', string(triggerBody()?['number'])),
+  '{{ANO_INICIAL}}', string(triggerBody()?['number_4'])),
+  '{{ANO_FIM}}', string(add(triggerBody()?['number_4'], sub(triggerBody()?['number_3'], 1)))),
+  '{{PRAZO_ANOS}}', string(triggerBody()?['number_3'])),
+  '{{QTD_DEVS}}', string(triggerBody()?['number_1'])),
+  '{{QTD_DBAS}}', string(triggerBody()?['number_2'])),
+  '{{LOGO_URL}}', triggerBody()?['text_10']),
+  '{{REFRESH_AVG_MIN}}', triggerBody()?['text_3']),
+  '{{REFRESH_COUNT}}', triggerBody()?['text_4']),
+  '{{STORAGE_TOTAL_TB}}', triggerBody()?['text_5']),
+  '{{UNVIRTUALIZED_TB}}', triggerBody()?['text_6']),
+  '{{STORAGE_SAVE_TB}}', triggerBody()?['text_7']),
+  '{{PROVISION_AVG_MIN}}', triggerBody()?['text_8']),
+  '{{CUSTO_TB_ANO}}', string(triggerBody()?['number_5'])),
+  '{{DIAS_UTEIS_ANO}}', string(triggerBody()?['number_11'])),
+  '{{GANHO_PROD_DEV}}', string(triggerBody()?['number_8'])),
+  '{{GANHO_PROD_DBA}}', string(triggerBody()?['number_9'])),
+  '{{CRESCIMENTO_STORAGE}}', string(triggerBody()?['number_6'])),
+  '{{FATOR_CAPTURA}}', '0.50'),
+  '{{REFRESH_SEM_DELPHIX_H}}', string(triggerBody()?['number_12'])),
+  '{{DATA_GERACAO}}', convertTimeZone(utcNow(), 'UTC', 'E. South America Standard Time', 'dd/MM/yyyy HH:mm')),
+  '{{ID_OPORTUNIDADE}}', concat('BCP-DLP-', formatDateTime(utcNow(),'yyyyMMdd-HHmmss'))),
+  '{{NARRATIVA_HERO_TITULO}}', body('Parse_Narrativas_GPT')?['hero_titulo']),
+  '{{NARRATIVA_HERO_LEDE}}', body('Parse_Narrativas_GPT')?['hero_lede']),
+  '{{NARRATIVA_VISAO_GERAL}}', body('Parse_Narrativas_GPT')?['visao_geral']),
+  '{{NARRATIVA_SAVING}}', body('Parse_Narrativas_GPT')?['saving']),
+  '{{NARRATIVA_PROXIMO_PASSO}}', body('Parse_Narrativas_GPT')?['proximo_passo']),
+  '{{CUSTO_DIARIO_FTE}}', string(triggerBody()?['number_7'])),
+  '{{CRESCIMENTO_EQUIPE}}', string(triggerBody()?['number_10'])),
+  '{{CUSTO_LICENCA_ANO}}', string(triggerBody()?['number_17'])),
+  '{{CUSTO_INFRA_VMWARE}}', string(triggerBody()?['number_18'])),
+  '{{CUSTO_SERVICO_V8}}', string(triggerBody()?['number_19']))
