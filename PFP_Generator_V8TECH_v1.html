@@ -67,13 +67,13 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(
 .field .hint{font-size:11px;color:var(--muted);margin-top:2px}
 .field .computed{font-size:12px;color:var(--primary);font-weight:600;margin-top:3px}
 
-input[type=number]{
+input[type=number],input[type=text]{
   padding:11px 14px;border:1.5px solid var(--border);border-radius:9px;
   font-size:15px;color:var(--text);background:#fff;width:100%;
   transition:border-color .15s,box-shadow .15s;
 }
-input[type=number]:focus{outline:none;border-color:var(--primary);box-shadow:0 0 0 3px rgba(26,58,110,.10)}
-input[type=number]::placeholder{color:#aab3c4}
+input[type=number]:focus,input[type=text]:focus{outline:none;border-color:var(--primary);box-shadow:0 0 0 3px rgba(26,58,110,.10)}
+input[type=number]::placeholder,input[type=text]::placeholder{color:#aab3c4}
 
 .taxa-wrap{display:flex;gap:8px;align-items:stretch}
 .taxa-wrap input{flex:1}
@@ -95,6 +95,16 @@ input[type=number]::placeholder{color:#aab3c4}
 }
 .btn-generate:hover{box-shadow:0 6px 24px rgba(232,66,58,.40);transform:translateY(-1px)}
 .btn-generate:active{transform:translateY(0)}
+
+.btn-export{
+  margin-top:14px;width:100%;padding:15px;
+  background:linear-gradient(90deg,var(--primary-deep),var(--primary-mid));
+  color:#fff;border:none;border-radius:10px;
+  font-size:16px;font-weight:700;letter-spacing:.02em;cursor:pointer;
+  box-shadow:0 4px 18px rgba(13,34,68,.30);transition:all .15s;
+}
+.btn-export:hover{box-shadow:0 6px 24px rgba(13,34,68,.40);transform:translateY(-1px)}
+.btn-export:active{transform:translateY(0)}
 
 /* ── RESULTS ── */
 #results-area{display:none}
@@ -171,6 +181,7 @@ input[type=number]::placeholder{color:#aab3c4}
   line-height:1.6;
 }
 .notice strong{font-weight:700}
+.notice.warn{background:#fff8e0;border-color:#e8d8a0;color:#7a5800}
 </style>
 </head>
 <body>
@@ -180,7 +191,7 @@ input[type=number]::placeholder{color:#aab3c4}
   <img src="https://raw.githubusercontent.com/V8-Assets/asset-factory/main/Logo_V8_TIM_2026_Branco.png" alt="V8.Tech" style="height:48px;object-fit:contain;border-right:1px solid rgba(255,255,255,.2);padding-right:22px;margin-right:0">
   <div class="header-info">
     <h1>PFP — Planilha de Formação de Preço (Produto)</h1>
-    <p>Delphix · Licenciamento por Invoice · Gerador Automático V1.0</p>
+    <p>Delphix · Licenciamento por Invoice · Gerador Automático V1.1</p>
   </div>
   <div style="margin-left:auto;display:flex;flex-direction:column;align-items:flex-end;gap:8px">
     <div class="header-badge">USO INTERNO</div>
@@ -192,7 +203,29 @@ input[type=number]::placeholder{color:#aab3c4}
 
   <!-- INPUT CARD -->
   <div class="input-card">
-    <div class="section-label">Parâmetros Gerais</div>
+    <div class="section-label">Identificação da Oportunidade</div>
+    <div class="input-grid g2">
+      <div class="field">
+        <label>Cliente</label>
+        <input type="text" id="cliente" placeholder="Ex.: CPFL Energia">
+      </div>
+      <div class="field">
+        <label>Vendedor / AM</label>
+        <input type="text" id="vendedor" placeholder="Nome do vendedor responsável">
+      </div>
+      <div class="field">
+        <label>Número da Operação</label>
+        <input type="text" id="operacao" placeholder="Ex.: 7801">
+        <span class="hint">Usado no nome do Excel oficial e no log de controle (XLS backend)</span>
+      </div>
+      <div class="field">
+        <label>Seu E-mail</label>
+        <input type="text" id="email" placeholder="vendedor@v8.tech">
+        <span class="hint">Para onde vai a confirmação com o link do Excel gerado</span>
+      </div>
+    </div>
+
+    <div class="section-label" style="margin-top:22px">Parâmetros Gerais</div>
     <div class="input-grid g2">
       <div class="field">
         <label>Taxa do Dólar (R$ / US$)</label>
@@ -260,20 +293,38 @@ input[type=number]::placeholder{color:#aab3c4}
 
     <div class="section-label">Detalhamento por Prazo de Contrato</div>
     <div class="year-grid" id="year-cards"></div>
+
+    <div class="section-label" style="margin-top:28px">Próximo Passo</div>
+    <div class="notice">
+      Isto abre o PowerApp da PFP em uma nova aba, levando o Cliente, Vendedor, Número da Operação e os
+      valores calculados (Invoice Líquida, Taxa e NF de Venda por prazo). O PowerApp dispara o Power Automate,
+      que preenche o Excel oficial (mesmo modelo PFP2026 usado hoje), salva no SharePoint, envia por e-mail
+      e grava o registro no log de controle.
+    </div>
+    <button class="btn-export" onclick="gerarExcelOficial()">📥 Gerar Excel Oficial (enviar para PowerApp)</button>
   </div>
 
   <div class="footer">
-    <strong>Assets V8.Tech | Portfolio</strong> · PFP Generator v1.0 · Delphix Licenciamento · Apenas uso interno<br>
+    <strong>Assets V8.Tech | Portfolio</strong> · PFP Generator v1.1 · Delphix Licenciamento · Apenas uso interno<br>
     Alíquotas fixas: IR 15% (gross-up) · ISS 2,90% · IOF 3,50% · Corretora R$ 370 · PIS 1,65% · COFINS 7,60% · IRPJ/CSLL 34% · Mínimo de margem: 12,50%
   </div>
 </div>
 
 <script>
 /* ═══════════════════════════════════════════════
+   CONFIG — PowerApp de destino
+   TODO: substituir pela URL real assim que o PowerApp da PFP for publicado (Passo 2 do plano)
+═══════════════════════════════════════════════ */
+const POWERAPP_URL_PFP = "https://apps.powerapps.com/play/e/SUBSTITUIR-PELO-ENVIRONMENT/a/SUBSTITUIR-PELO-APP-ID";
+
+/* Guarda o último resultado calculado, para o botão "Gerar Excel Oficial" reaproveitar */
+let ULTIMO_RESULTADO = null;
+
+/* ═══════════════════════════════════════════════
    FORMATOS
 ═══════════════════════════════════════════════ */
-const fBRL = v => 'R$ ' + v.toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2});
-const fUSD = v => 'US$ ' + v.toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2});
+const fBRL = v => 'R$ ' + v.toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2});
+const fUSD = v => 'US$ ' + v.toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2});
 const fPCT = v => (v*100).toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2}) + '%';
 
 /* ═══════════════════════════════════════════════
@@ -471,6 +522,9 @@ function gerarPFP() {
     return;
   }
 
+  // Guarda para o botão "Gerar Excel Oficial"
+  ULTIMO_RESULTADO = { results, taxa, desc };
+
   // Consolidado
   document.getElementById('consolidado-cards').innerHTML = renderConsolidado(results);
 
@@ -482,6 +536,51 @@ function gerarPFP() {
   const area = document.getElementById('results-area');
   area.style.display = 'block';
   area.scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+/* ═══════════════════════════════════════════════
+   GERAR EXCEL OFICIAL — abre o PowerApp com Param()
+   Mapeia 1:1 para as células de input do template oficial PFP2026:
+     CONSOLIDADO!D7 = Cliente
+     'DELPHIX-1ANO'!C7 / C8 / C9   = Invoice Líquida US$ / Taxa / NF de Venda (1 ano)
+     'DELPHIX-2 ANOS'!C7 / C8 / C9 = idem (2 anos)
+     'DELPHIX-3 ANOS'!C7 / C8 / C9 = idem (3 anos)
+═══════════════════════════════════════════════ */
+function gerarExcelOficial() {
+  if (!ULTIMO_RESULTADO) {
+    alert('Clique em "Gerar Precificação Completa" antes de exportar.');
+    return;
+  }
+  const cliente   = document.getElementById('cliente').value.trim();
+  const vendedor  = document.getElementById('vendedor').value.trim();
+  const operacao  = document.getElementById('operacao').value.trim();
+  const email     = document.getElementById('email').value.trim();
+
+  if (!cliente || !vendedor || !operacao || !email) {
+    alert('Preencha Cliente, Vendedor, Número da Operação e E-mail antes de gerar o Excel oficial.');
+    return;
+  }
+
+  const { results, taxa, desc } = ULTIMO_RESULTADO;
+
+  const params = new URLSearchParams();
+  params.set('cliente', cliente);
+  params.set('vendedor', vendedor);
+  params.set('operacao', operacao);
+  params.set('email', email);
+  params.set('taxa', taxa);
+  params.set('desconto', (desc * 100).toString());
+
+  results.forEach((r, idx) => {
+    const ano = idx + 1;
+    if (r.d) {
+      params.set('invliq' + ano, r.d.invoiceLiq.toFixed(2));
+      params.set('nf' + ano, r.d.nf.toFixed(2));
+    }
+  });
+
+  const url = POWERAPP_URL_PFP + '?' + params.toString();
+  window.open(url, '_blank');
 }
 
 // Atualiza net preview quando desconto muda
