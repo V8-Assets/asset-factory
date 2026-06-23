@@ -565,14 +565,14 @@ function gerarExcelOficial() {
   params.set('vendedor', vendedor);
   params.set('operacao', operacao);
   params.set('email', email);
-  params.set('taxa', taxa);
+  params.set('taxa', taxa.toString().replace('.', ','));
   params.set('desconto', (desc * 100).toString());
 
   results.forEach((r, idx) => {
     const ano = idx + 1;
     if (r.d) {
-      params.set('invliq' + ano, r.d.invoiceLiq.toFixed(2));
-      params.set('nf' + ano, r.d.nf.toFixed(2));
+      params.set('invliq' + ano, Math.round(r.d.invoiceLiq).toString());
+      params.set('nf' + ano, r.d.nf.toFixed(2).replace('.', ','));
     }
   });
 
