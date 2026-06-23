@@ -214,8 +214,8 @@ input[type=number]::placeholder,input[type=text]::placeholder{color:#aab3c4}
         <input type="text" id="vendedor" placeholder="Nome do vendedor responsável">
       </div>
       <div class="field">
-        <label>Número da Operação</label>
-        <input type="text" id="operacao" placeholder="Ex.: 7801">
+        <label>Número da Oportunidade</label>
+        <input type="text" id="operacao" placeholder="Ex.: 26008392">
         <span class="hint">Usado no nome do Excel oficial e no log de controle (XLS backend)</span>
       </div>
       <div class="field">
@@ -554,7 +554,7 @@ function gerarExcelOficial() {
   const email     = document.getElementById('email').value.trim();
 
   if (!cliente || !vendedor || !operacao || !email) {
-    alert('Preencha Cliente, Vendedor, Número da Operação e E-mail antes de gerar o Excel oficial.');
+    alert('Preencha Cliente, Vendedor, Número da Oportunidade e E-mail antes de gerar o Excel oficial.');
     return;
   }
 
