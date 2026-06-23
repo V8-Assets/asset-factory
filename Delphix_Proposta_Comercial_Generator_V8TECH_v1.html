@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Proposta Comercial Generator — V8.Tech | Delphix</title>
+<style>
+:root {
+  --primary:      #1a3a6e;
+  --primary-deep: #0d2244;
+  --primary-mid:  #1e4585;
+  --accent:       #e8423a;
+  --accent-deep:  #b52d27;
+  --bg:           #f0f3f9;
+  --card:         #ffffff;
+  --text:         #1e2b3c;
+  --muted:        #5a6880;
+  --border:       #dde3ef;
+  --green:        #1a6b3a;
+  --green-bg:     #e4f5ec;
+  --yellow:       #9a6800;
+  --yellow-bg:    #fff8e0;
+  --radius:       14px;
+  --shadow:       0 2px 16px rgba(15,30,70,.07);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(--text);min-height:100vh}
+
+/* ── HEADER ── */
+.header{
+  background:linear-gradient(120deg,var(--primary-deep) 0%,var(--primary) 55%,#2455a0 100%);
+  padding:22px 40px;display:flex;align-items:center;gap:22px;
+  box-shadow:0 2px 20px rgba(0,0,0,.18);
+}
+.header-info h1{color:#fff;font-size:20px;font-weight:700;letter-spacing:-.01em}
+.header-info p{color:#8fb4e8;font-size:12px;margin-top:3px;letter-spacing:.02em}
+.header-badge{
+  margin-left:auto;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.2);
+  color:#c8daf5;font-size:11px;padding:6px 14px;border-radius:20px;letter-spacing:.04em;
+}
+
+/* ── LAYOUT ── */
+.page{max-width:1160px;margin:0 auto;padding:32px 20px 48px}
+
+/* ── SECTION LABELS ── */
+.section-label{
+  font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;
+  letter-spacing:.1em;margin-bottom:14px;display:flex;align-items:center;gap:8px;
+}
+.section-label::after{content:'';flex:1;height:1px;background:var(--border)}
+
+/* ── INPUT CARD ── */
+.input-card{
+  background:var(--card);border-radius:var(--radius);border:1px solid var(--border);
+  box-shadow:var(--shadow);padding:28px 32px;margin-bottom:28px;
+}
+.input-grid{display:grid;gap:18px}
+.g2{grid-template-columns:repeat(2,1fr)}
+.g3{grid-template-columns:repeat(3,1fr)}
+.g4{grid-template-columns:repeat(4,1fr)}
+@media(max-width:700px){.g2,.g3,.g4{grid-template-columns:1fr}}
+@media(max-width:1000px) and (min-width:701px){.g4{grid-template-columns:repeat(2,1fr)}}
+
+.field{display:flex;flex-direction:column;gap:5px}
+.field label{font-size:11.5px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.06em}
+.field .hint{font-size:11px;color:var(--muted);margin-top:2px}
+
+input[type=text]{
+  padding:11px 14px;border:1.5px solid var(--border);border-radius:9px;
+  font-size:15px;color:var(--text);background:#fff;width:100%;
+  transition:border-color .15s,box-shadow .15s;
+}
+input[type=text]:focus{outline:none;border-color:var(--primary);box-shadow:0 0 0 3px rgba(26,58,110,.10)}
+input[type=text]::placeholder{color:#aab3c4}
+
+/* ── AVISO PRÉ-REQUISITO ── */
+.prereq{
+  background:#fff8e0;border:1px solid #e8d8a0;border-radius:12px;
+  padding:18px 22px;margin-bottom:28px;
+}
+.prereq-title{
+  font-size:13px;font-weight:700;color:#7a5800;margin-bottom:10px;
+  display:flex;align-items:center;gap:8px;
+}
+.prereq-steps{display:flex;gap:12px;flex-wrap:wrap;margin-top:10px}
+.prereq-step{
+  display:flex;align-items:center;gap:8px;
+  background:#fff;border:1px solid #e8d8a0;border-radius:8px;
+  padding:10px 16px;font-size:12px;color:#7a5800;font-weight:600;
+}
+.prereq-step .num{
+  width:22px;height:22px;border-radius:50%;background:#e8a020;color:#fff;
+  font-size:11px;font-weight:800;display:flex;align-items:center;justify-content:center;flex-shrink:0;
+}
+.prereq-step.done{background:#e4f5ec;border-color:#a8dfc0;color:#1a6b3a}
+.prereq-step.done .num{background:#2e8b57}
+
+/* ── GENERATE BUTTON ── */
+.btn-generate{
+  margin-top:24px;width:100%;padding:15px;
+  background:linear-gradient(90deg,var(--accent-deep),var(--accent));
+  color:#fff;border:none;border-radius:10px;
+  font-size:16px;font-weight:700;letter-spacing:.02em;cursor:pointer;
+  box-shadow:0 4px 18px rgba(232,66,58,.30);transition:all .15s;
+}
+.btn-generate:hover{box-shadow:0 6px 24px rgba(232,66,58,.40);transform:translateY(-1px)}
+.btn-generate:active{transform:translateY(0)}
+
+/* ── NOTICE ── */
+.notice{
+  background:#eef4ff;border:1px solid #c2d6f5;border-radius:10px;
+  padding:13px 18px;font-size:12px;color:var(--primary);margin-bottom:22px;
+  line-height:1.6;
+}
+.notice strong{font-weight:700}
+
+/* ── FOOTER ── */
+.footer{
+  text-align:center;color:var(--muted);font-size:11px;padding:24px;
+  border-top:1px solid var(--border);margin-top:32px;
+}
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<div class="header">
+  <img src="https://raw.githubusercontent.com/V8-Assets/asset-factory/main/Logo_V8_TIM_2026_Branco.png" alt="V8.Tech" style="height:48px;object-fit:contain;border-right:1px solid rgba(255,255,255,.2);padding-right:22px;margin-right:0">
+  <div class="header-info">
+    <h1>Proposta Comercial — Gerador Automático</h1>
+    <p>Delphix · Aquisição de Subscrição · Gerador Automático V1.0</p>
+  </div>
+  <div style="margin-left:auto;display:flex;flex-direction:column;align-items:flex-end;gap:8px">
+    <div class="header-badge">USO INTERNO</div>
+    <div style="color:#8fb4e8;font-size:11px;letter-spacing:.05em;font-weight:600">Assets V8.Tech | Portfolio</div>
+  </div>
+</div>
+
+<div class="page">
+
+  <!-- PRÉ-REQUISITO -->
+  <div class="prereq">
+    <div class="prereq-title">
+      ⚠️ Pré-requisitos obrigatórios antes de gerar a Proposta
+    </div>
+    <p style="font-size:12px;color:#7a5800;line-height:1.6">
+      A Proposta Comercial busca automaticamente os dados do cliente e os valores de precificação gerados nas etapas anteriores.
+      <strong>O número da oportunidade deve existir no sistema</strong> antes de prosseguir.
+    </p>
+    <div class="prereq-steps">
+      <div class="prereq-step done">
+        <div class="num">1</div>
+        BC de Renovação gerado e aprovado
+      </div>
+      <div class="prereq-step done">
+        <div class="num">2</div>
+        PFP (Excel) gerado com valores finais
+      </div>
+      <div class="prereq-step">
+        <div class="num">3</div>
+        Informe abaixo o nº da oportunidade e dados do cliente
+      </div>
+    </div>
+  </div>
+
+  <!-- CARD 1 — IDENTIFICAÇÃO -->
+  <div class="input-card">
+    <div class="section-label">Identificação da Oportunidade</div>
+    <div class="input-grid g2">
+      <div class="field">
+        <label>Número da Oportunidade (mesmo nº Portal V8)</label>
+        <input type="text" id="numOportunidade" placeholder="Ex.: 26008392">
+        <span class="hint">Chave de busca no sistema — deve existir no BC e na PFP gerados</span>
+      </div>
+      <div class="field">
+        <label>Seu E-mail</label>
+        <input type="text" id="email" placeholder="vendedor@v8.tech">
+        <span class="hint">Você receberá a Proposta em Word por e-mail</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- CARD 2 — DADOS DA PROPOSTA -->
+  <div class="input-card">
+    <div class="section-label">Dados da Proposta</div>
+    <div class="input-grid g3">
+      <div class="field">
+        <label>Número da Proposta</label>
+        <input type="text" id="numProposta" placeholder="Ex.: 2026-0142">
+      </div>
+      <div class="field">
+        <label>Data da Proposta</label>
+        <input type="text" id="dataProposta" placeholder="Ex.: 23/06/2026">
+      </div>
+      <div class="field">
+        <label>Validade da Proposta</label>
+        <input type="text" id="validadeProposta" placeholder="Ex.: 23/07/2026">
+      </div>
+    </div>
+  </div>
+
+  <!-- CARD 3 — DADOS DO CLIENTE -->
+  <div class="input-card">
+    <div class="section-label">Dados Cadastrais do Cliente</div>
+    <div class="notice">
+      <strong>Por que preencher aqui?</strong> Estes dados não estão no BC nem na PFP — são específicos da proposta formal e precisam ser informados manualmente.
+    </div>
+    <div class="input-grid g2">
+      <div class="field">
+        <label>CNPJ</label>
+        <input type="text" id="cnpj" placeholder="Ex.: 00.000.000/0001-00">
+      </div>
+      <div class="field">
+        <label>Cidade / Estado</label>
+        <input type="text" id="cidade" placeholder="Ex.: São Paulo, SP">
+      </div>
+      <div class="field">
+        <label>Endereço</label>
+        <input type="text" id="endereco" placeholder="Rua, número, complemento, bairro">
+      </div>
+      <div class="field">
+        <label>CEP</label>
+        <input type="text" id="cep" placeholder="Ex.: 00000-000">
+      </div>
+    </div>
+  </div>
+
+  <!-- BOTÃO -->
+  <button class="btn-generate" onclick="gerarProposta()">📄 Gerar Proposta Comercial (Word)</button>
+
+  <div class="footer">
+    <strong>Assets V8.Tech | Portfolio</strong> · Proposta Comercial Generator v1.0 · Delphix · Apenas uso interno<br>
+    Os dados financeiros são buscados automaticamente a partir do BC e da PFP gerados previamente para esta oportunidade.
+  </div>
+</div>
+
+<script>
+/* ═══════════════════════════════════════════════
+   CONFIG — PowerApp de destino
+   TODO: substituir pela URL real do PowerApp da Proposta
+═══════════════════════════════════════════════ */
+const POWERAPP_URL_PROPOSTA = "SUBSTITUIR_URL_POWERAPP_PROPOSTA";
+
+function gerarProposta() {
+  const numOportunidade  = document.getElementById('numOportunidade').value.trim();
+  const email            = document.getElementById('email').value.trim();
+  const numProposta      = document.getElementById('numProposta').value.trim();
+  const dataProposta     = document.getElementById('dataProposta').value.trim();
+  const validadeProposta = document.getElementById('validadeProposta').value.trim();
+  const cnpj             = document.getElementById('cnpj').value.trim();
+  const cidade           = document.getElementById('cidade').value.trim();
+  const endereco         = document.getElementById('endereco').value.trim();
+  const cep              = document.getElementById('cep').value.trim();
+
+  if (!numOportunidade || !email || !numProposta || !dataProposta || !validadeProposta || !cnpj || !cidade || !endereco || !cep) {
+    alert('Preencha todos os campos antes de gerar a Proposta.');
+    return;
+  }
+
+  const params = new URLSearchParams();
+  params.set('numoportunidade', numOportunidade);
+  params.set('email',           email);
+  params.set('numproposta',     numProposta);
+  params.set('dataproposta',    dataProposta);
+  params.set('validade',        validadeProposta);
+  params.set('cnpj',            cnpj);
+  params.set('cidade',          cidade);
+  params.set('endereco',        endereco);
+  params.set('cep',             cep);
+
+  const url = POWERAPP_URL_PROPOSTA + '&' + params.toString();
+  window.open(url, '_blank');
+}
+</script>
+</body>
+</html>
